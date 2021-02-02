@@ -1,0 +1,24 @@
+{
+  "name": "unioncombat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kparks29/UnionCombatAcademy.git"
+  },
+  "author": "Kendrick Parks",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kparks29/UnionCombatAcademy/issues"
+  },
+  "homepage": "https://github.com/kparks29/UnionCombatAcademy#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "lodash": "^4.17.20",
+    "moment": "^2.29.1"
+  }
+}
