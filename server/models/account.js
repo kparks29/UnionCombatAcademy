@@ -1,8 +1,9 @@
 const Joi = require('@hapi/joi')
+const uuid = require('uuid')
 
 module.exports = class Account {
     constructor(data = {}) {
-        this.id = data.id
+        this.id = data.id || uuid.v4()
         this.type = data.type
     }
 

@@ -109,12 +109,4 @@ CREATE TABLE IF NOT EXISTS Schedules (
 		REFERENCES Users (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TRIGGER before_insert_account BEFORE INSERT ON Accounts FOR EACH ROW SET NEW.id = UUID();
-CREATE TRIGGER before_insert_user BEFORE INSERT ON Users FOR EACH ROW SET NEW.id = UUID();
-CREATE TRIGGER before_insert_program BEFORE INSERT ON Programs FOR EACH ROW SET NEW.id = UUID();
-CREATE TRIGGER before_insert_role BEFORE INSERT ON Roles FOR EACH ROW SET NEW.id = UUID();
-CREATE TRIGGER before_insert_attendance BEFORE INSERT ON Attendance FOR EACH ROW SET NEW.id = UUID();
-CREATE TRIGGER before_insert_news BEFORE INSERT ON News FOR EACH ROW SET NEW.id = UUID();
-CREATE TRIGGER before_insert_schedule BEFORE INSERT ON Schedules FOR EACH ROW SET NEW.id = UUID();
-
 INSERT INTO SystemInfo (version, migration) VALUES ('1.0.0', 1);

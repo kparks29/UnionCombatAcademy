@@ -1,8 +1,9 @@
 const Joi = require('@hapi/joi')
+const uuid = require('uuid')
 
 module.exports = class News {
     constructor(data = {}) {
-        this.id = data.id
+        this.id = data.id || uuid.v4()
         this.programId = data.programId
         this.title = data.title
         this.message = data.message
