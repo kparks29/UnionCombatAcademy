@@ -1,16 +1,8 @@
 const jwt = require('jsonwebtoken')
-const _ = require('lodash')
-
-class Helper {
-    constructor() {
-    }
-}
-
-const helper = new Helper()
 
 const adminOnly = (req, res, next) => {
     if (!req.user || req.user.role !== 'admin') {
-        return res.status(403).json({ status: 1, error: 'Unauthorized' })
+        return res.status(403).json({ error: 'Unauthorized' })
     }
 
     next()
@@ -27,29 +19,29 @@ const asyncHandler = fn => (...args) => {
 const errorHandler = (error, req, res, next) => {
     console.log(error)
     if (typeof error === 'object') {
-        res.status(error.code).json({ status: 1, error: error.message })
+        res.status(error.code).json({ error: error.message })
     } else {
-        res.status(400).json({ status: 1, error })
+        res.status(400).json({ error })
     }
 }
 
 const validToken = async (req, res, next) => {
     if ((!req.headers['authorization'] || req.headers['authorization'] === '')) {
-        return res.status(400).json({ status: 1, error: 'Missing Authorization Header' })
+        return res.status(400).json({ error: 'Missing Authorization Header' })
     }
 
     try {
         let { user } = jwt.verify(req.headers['authorization'].replace('Bearer ', ''), process.env.TOKEN_SECRET_KEY)
 
         if (!user) {
-            return res.status(401).json({ status: 1, error: 'Invalid Token' })
+            return res.status(401).json({ error: 'Invalid Token' })
         }
 
         req.user = user
         next()
     } catch (err) {
         console.log(err)
-        return res.status(401).json({ status: 1, error: 'Invalid Token' })
+        return res.status(401).json({ error: 'Invalid Token' })
     }
 }
 

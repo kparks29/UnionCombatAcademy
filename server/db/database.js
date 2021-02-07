@@ -1,5 +1,4 @@
 const { createPool } = require('mysql2')
-const Promise = require('promise')
 
 class Database {
     constructor() {

@@ -1,12 +1,13 @@
 require('dotenv').config({ path: __dirname + '/../.env' })
+const PORT = process.env.PORT || 8080;
 const http = require('http')
 const path = require('path')
 const cors = require('cors')
 const express = require('express')
 const app = express()
-const { errorHandler } = require('./helpers/helpers')
+const { asyncHandler, errorHandler } = require('./helpers/helpers')
 const { mailer } = require('./helpers/mailer')
-const PORT = process.env.PORT || 8080;
+const { database } = require('./db/database');
 
 app.use(cors({
     allowedHeaders: [
@@ -18,7 +19,14 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../app')));
 app.use(errorHandler)
 
-
+app.get('/api', asyncHandler(async (req, res) => {
+    let results = await database.query('SELECT MAX(migration) as migration, version FROM SystemInfo', [])
+    if (results && results.length > 0) {
+        res.status(200).json({ apiVersion: results[0].version })
+    } else {
+        res.status(500).json({ error: 'Unable to find system version' })
+    }
+}))
 app.get('/api/health', (req, res) => {
     res.status(200).send('Server Healthy')
 })
