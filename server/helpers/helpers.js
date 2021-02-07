@@ -19,7 +19,7 @@ const asyncHandler = fn => (...args) => {
 const errorHandler = (error, req, res, next) => {
     console.log(error)
     if (typeof error === 'object') {
-        res.status(error.code).json({ error: error.message })
+        res.status(error.code || 500).json({ error: error.message })
     } else {
         res.status(400).json({ error })
     }
