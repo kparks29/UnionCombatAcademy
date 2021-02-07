@@ -10,6 +10,8 @@ module.exports = class Program {
         this.cycleCount = data.cycleCount
         this.cycleType = data.cycleType
         this.attendancePerCycle = data.attendancePerCycle
+        this.createdAt = data.createdAt
+        this.updatedAt = data.updatedAt
         this.deletedAt = data.deletedAt
     }
 
@@ -22,25 +24,29 @@ module.exports = class Program {
             cycleCount: this.cycleCount,
             cycleType: this.cycleType,
             attendancePerCycle: this.attendancePerCycle,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
             deletedAt: this.deletedAt
         }
     }
 
     static get schema() {
         return Joi.object({
-            id: Joi.uuid().allow(null),
-            accountId: Joi.uuid().required(),
+            id: Joi.string().uuid().allow(null),
+            accountId: Joi.string().uuid().required(),
             name: Joi.string().required(),
             description: Joi.string(),
             cycleCount: Joi.number().required(),
             cycleType: Joi.string().valid('years', 'months', 'weeks', 'days').required(),
             attendancePerCycle: Joi.number().required(),
+            createdAt: Joi.date().iso().allow(null),
+            updatedAt: Joi.date().iso().allow(null),
             deletedAt: Joi.date().iso().allow(null)
         })
     }
 
     static validate(user) {
-        let { error, value } = User.schema.validate(user)
+        let { error, value } = Program.schema.validate(user)
         if (error) {
             error = error.details.map(detail => detail.message)
         }

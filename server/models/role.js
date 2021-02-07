@@ -8,6 +8,8 @@ module.exports = class Role {
         this.programId = data.programId
         this.userId = data.userId
         this.role = data.role
+        this.createdAt = data.createdAt
+        this.updatedAt = data.updatedAt
     }
 
     get viewable() {
@@ -16,22 +18,26 @@ module.exports = class Role {
             accountId: this.accountId,
             programId: this.programId,
             userId: this.userId,
-            role: this.role
+            role: this.role,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt
         }
     }
 
     static get schema() {
         return Joi.object({
-            id: Joi.uuid().allow(null),
-            accountId: Joi.uuid().required(),
-            programId: Joi.uuid().required(),
-            userId: Joi.uuid().required(),
-            role: Joi.string().valid('admin', 'owner', 'instructor', 'student').required()
+            id: Joi.string().uuid().allow(null),
+            accountId: Joi.string().uuid().required(),
+            programId: Joi.string().uuid().required(),
+            userId: Joi.string().uuid().required(),
+            role: Joi.string().valid('admin', 'owner', 'instructor', 'student').required(),
+            createdAt: Joi.date().iso().allow(null),
+            updatedAt: Joi.date().iso().allow(null)
         })
     }
 
     static validate(user) {
-        let { error, value } = User.schema.validate(user)
+        let { error, value } = Role.schema.validate(user)
         if (error) {
             error = error.details.map(detail => detail.message)
         }

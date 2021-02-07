@@ -13,6 +13,8 @@ module.exports = class User {
         this.canRankUp = data.canRankUp
         this.hashedPassword = data.hashedPassword
         this.salt = data.salt
+        this.createdAt = data.createdAt
+        this.updatedAt = data.updatedAt
         this.deletedAt = data.deletedAt
     }
 
@@ -26,20 +28,26 @@ module.exports = class User {
             beltColor: this.beltColor,
             stripeCount: this.stripeCount,
             canRankUp: this.canRankUp,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
             deletedAt: this.deletedAt
         }
     }
 
     static get schema() {
         return Joi.object({
-            id: Joi.uuid().allow(null),
-            accountId: Joi.uuid().required(),
+            id: Joi.string().uuid().allow(null),
+            accountId: Joi.string().uuid().required(),
             firstName: Joi.string().required(),
             lastName: Joi.string().required(),
             email: Joi.string().email().required(),
             beltColor: Joi.string().required(),
             stripeCount: Joi.number().required(),
+            hashedPassword: Joi.string(),
+            salt: Joi.string(),
             canRankUp: Joi.boolean(),
+            createdAt: Joi.date().iso().allow(null),
+            updatedAt: Joi.date().iso().allow(null),
             deletedAt: Joi.date().iso().allow(null)
         })
     }
@@ -50,5 +58,9 @@ module.exports = class User {
             error = error.details.map(detail => detail.message)
         }
         return error
+    }
+
+    static get passwordRegex() {
+        return new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$', 'g')
     }
 }

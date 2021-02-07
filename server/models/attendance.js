@@ -9,6 +9,7 @@ module.exports = class Attendance {
         this.beltColor = data.beltColor
         this.stripeCount = data.stripeCount
         this.createdAt = data.createdAt
+        this.updatedAt = data.updatedAt
     }
 
     get viewable() {
@@ -18,23 +19,25 @@ module.exports = class Attendance {
             userId: this.userId,
             beltColor: this.beltColor,
             stripeCount: this.stripeCount,
-            createdAt: this.createdAt
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt
         }
     }
 
     static get schema() {
         return Joi.object({
-            id: Joi.uuid().allow(null),
-            programId: Joi.uuid().required(),
-            userId: Joi.uuid().required(),
+            id: Joi.string().uuid().allow(null),
+            programId: Joi.string().uuid().required(),
+            userId: Joi.string().uuid().required(),
             beltColor: Joi.string().required(),
             stripeCount: Joi.number().required(),
-            createdAt: Joi.date().iso().allow(null)
+            createdAt: Joi.date().iso().allow(null),
+            updatedAt: Joi.date().iso().allow(null)
         })
     }
 
     static validate(user) {
-        let { error, value } = User.schema.validate(user)
+        let { error, value } = Attendance.schema.validate(user)
         if (error) {
             error = error.details.map(detail => detail.message)
         }

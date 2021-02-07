@@ -30,20 +30,20 @@ module.exports = class Schedule {
 
     static get schema() {
         return Joi.object({
-            id: Joi.uuid().allow(null),
-            programId: Joi.uuid().required(),
+            id: Joi.string().uuid().allow(null),
+            programId: Joi.string().uuid().required(),
             date: Joi.string().required(),
             start: Joi.string().required(),
             end: Joi.string().required(),
             createdAt: Joi.date().iso().allow(null),
             updatedAt: Joi.date().iso().allow(null),
-            createdBy: Joi.uuid().allow(null),
-            updatedBy: Joi.uuid().allow(null)
+            createdBy: Joi.string().uuid().allow(null),
+            updatedBy: Joi.string().uuid().allow(null)
         })
     }
 
     static validate(user) {
-        let { error, value } = User.schema.validate(user)
+        let { error, value } = Schedule.schema.validate(user)
         if (error) {
             error = error.details.map(detail => detail.message)
         }
