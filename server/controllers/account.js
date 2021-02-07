@@ -59,8 +59,8 @@ module.exports = class AccountController {
         let user = (await this.userService.createUser(newUser)).viewable
         let program = (await this.programService.createProgram(newProgram)).viewable
 
-        const accessToken = jwt.sign({ account, user, program }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' })
-        const refreshToken = jwt.sign({ account, user, program }, process.env.REFRESH_TOKEN_SECRET_KEY, { expiresIn: '30d' })
+        const accessToken = jwt.sign({ account, user }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' })
+        const refreshToken = jwt.sign({ account, user }, process.env.REFRESH_TOKEN_SECRET_KEY, { expiresIn: '30d' })
 
         res.status(201).json({ account, user, program, accessToken, refreshToken })
     }
