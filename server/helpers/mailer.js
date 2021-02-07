@@ -17,7 +17,11 @@ class Mailer {
                 pass: process.env.SMTP_PASS
             },
             pool: true,
-            secure: process.env.SMTP_SERVICE.toLowerCase() === 'gmail'
+            secure: process.env.SMTP_SERVICE.toLowerCase() === 'gmail',
+            tls: {
+                // do not fail on invalid certs
+                rejectUnauthorized: false
+            }
         }))
 
         this.transporter.verify(error => {
