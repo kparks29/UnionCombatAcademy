@@ -4,8 +4,13 @@ CREATE TABLE IF NOT EXISTS SystemInfo (
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS Accounts (
+	id VARCHAR(36) PRIMARY KEY
+)
+
 CREATE TABLE IF NOT EXISTS Users (
     id VARCHAR(36) PRIMARY KEY,
+	accountId VARCHAR(36) NOT NULL,
     firstName VARCHAR(200) NOT NULL,
     lastName VARCHAR(200) NOT NULL,
     email VARCHAR(200) NOT NULL UNIQUE,
@@ -14,24 +19,35 @@ CREATE TABLE IF NOT EXISTS Users (
     canRankUp BOOLEAN DEFAULT FALSE,
     hashedPassword VARCHAR(60),
 	salt VARCHAR(36) UNIQUE,
-    deletedAt TIMESTAMP NULL
+    deletedAt TIMESTAMP NULL,
+	FOREIGN KEY (accountId)
+		REFERENCES Accounts (id)
+		ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS Programs (
 	id VARCHAR(36) PRIMARY KEY,
+	accountId VARCHAR(36) NOT NULL,
     name VARCHAR(200) NOT NULL,
     description TEXT NULL,
     cycleCount INT DEFAULT 1,
     cycleType SET('years', 'months', 'weeks', 'days') DEFAULT 'years',
     attendancePerCycle INT DEFAULT 1,
-    deletedAt TIMESTAMP NULL
+    deletedAt TIMESTAMP NULL,
+	FOREIGN KEY (accountId)
+		REFERENCES Accounts (id)
+		ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS UserPrograms (
+CREATE TABLE IF NOT EXISTS Roles (
 	id VARCHAR(36) PRIMARY KEY,
+	accountId VARCHAR(36) NOT NULL,
     programId VARCHAR(36) NOT NULL,
     userId VARCHAR(36) NOT NULL,
     role SET('admin', 'owner', 'instructor', 'student') DEFAULT 'student',
+	FOREIGN KEY (accountId)
+		REFERENCES Accounts (id)
+		ON DELETE CASCADE,
 	FOREIGN KEY (programId)
 		REFERENCES Programs (id)
 		ON DELETE CASCADE,
@@ -92,9 +108,10 @@ CREATE TABLE IF NOT EXISTS Schedules (
 		REFERENCES Users (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TRIGGER before_insert_account BEFORE INSERT ON Accounts FOR EACH ROW SET NEW.id = UUID();
 CREATE TRIGGER before_insert_user BEFORE INSERT ON Users FOR EACH ROW SET NEW.id = UUID();
 CREATE TRIGGER before_insert_program BEFORE INSERT ON Programs FOR EACH ROW SET NEW.id = UUID();
-CREATE TRIGGER before_insert_userprogram BEFORE INSERT ON UserPrograms FOR EACH ROW SET NEW.id = UUID();
+CREATE TRIGGER before_insert_role BEFORE INSERT ON Roles FOR EACH ROW SET NEW.id = UUID();
 CREATE TRIGGER before_insert_attendance BEFORE INSERT ON Attendance FOR EACH ROW SET NEW.id = UUID();
 CREATE TRIGGER before_insert_news BEFORE INSERT ON News FOR EACH ROW SET NEW.id = UUID();
 CREATE TRIGGER before_insert_schedule BEFORE INSERT ON Schedules FOR EACH ROW SET NEW.id = UUID();
