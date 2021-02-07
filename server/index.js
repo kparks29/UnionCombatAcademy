@@ -6,7 +6,7 @@ const cors = require('cors')
 const express = require('express')
 const app = express()
 const { asyncHandler, errorHandler } = require('./helpers/helpers')
-const { mailer } = require('./helpers/mailer')
+// const { mailer } = require('./helpers/mailer')
 const { database } = require('./db/database');
 
 app.use(cors({
@@ -45,7 +45,7 @@ process.on('unhandledRejection', (err) => {
 })
 
 process.on('beforeExit', (err) => {
-    mailer.close()
+    // mailer.close()
     server.close()
     console.log('beforeExit', err)
     process.exit(1)
