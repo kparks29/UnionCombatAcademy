@@ -5,6 +5,24 @@ const _ = require('lodash')
 module.exports = class ProgramService {
     constructor() { }
 
+    async getProgramNameAndAccountId(programName, accountId) {
+        const sql = 'SELECT * FROM Programs WHERE name=? AND accountId=?;'
+        const values = [programName, accountId]
+
+        try {
+            let results = await database.query(sql, values)
+
+            if (results && results.length > 0) {
+                return new Program(results[0])
+            }
+
+            return
+        } catch (err) {
+            console.log(err)
+            return Promise.reject({ code: 500, message: 'Unable to get Program.' })
+        }
+    }
+
     async getProgramById(programId) {
         const sql = 'SELECT * FROM Programs WHERE id=?;'
         const values = [programId]
