@@ -4,12 +4,14 @@ const AccountService = require('../services/account')
 const UserService = require('../services/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const RoleService = require('../services/roles')
 
 module.exports = class AuthController {
     constructor() {
         this.router = new Router()
         this.userService = new UserService()
         this.accountService = new AccountService()
+        this.roleService = new RoleService()
 
         this.router.post('/login', asyncHandler(this.login.bind(this)))
         this.router.post('/refresh', asyncHandler(this.refreshToken.bind(this)))
@@ -31,11 +33,12 @@ module.exports = class AuthController {
         }
 
         let account = await this.accountService.getAccountById(user.accountId)
+        let roles = (await this.roleService.getRolesByUserId(user.id)).map(role => role.viewable)
 
         const accessToken = jwt.sign({ account: account.viewable, user: user.viewable }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' })
         const refreshToken = jwt.sign({ account: account.viewable, user: user.viewable }, process.env.REFRESH_TOKEN_SECRET_KEY, { expiresIn: '30d' })
 
-        res.status(201).json({ account: account.viewable, user: user.viewable, accessToken, refreshToken })
+        res.status(201).json({ account: account.viewable, user: user.viewable, roles, accessToken, refreshToken })
     }
 
     async refreshToken(req, res, next) {

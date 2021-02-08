@@ -7,7 +7,7 @@ module.exports = class Role {
         this.accountId = data.accountId
         this.programId = data.programId
         this.userId = data.userId
-        this.role = data.role
+        this.role = data.role || 'student'
         this.createdAt = data.createdAt
         this.updatedAt = data.updatedAt
     }

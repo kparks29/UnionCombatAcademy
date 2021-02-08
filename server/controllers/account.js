@@ -10,13 +10,16 @@ const User = require('../models/user')
 const AccountService = require('../services/account')
 const UserService = require('../services/user')
 const ProgramService = require('../services/program')
+const Role = require('../models/role')
+const RoleService = require('../services/roles')
 
 module.exports = class AccountController {
     constructor() {
         this.router = new Router()
         this.accountService = new AccountService()
         this.userService = new UserService()
-        this.programService = new ProgramService
+        this.programService = new ProgramService()
+        this.roleService = new RoleService()
 
         this.router.post('/', asyncHandler(this.register.bind(this)))
     }
@@ -40,10 +43,17 @@ module.exports = class AccountController {
         let newProgram = new Program(Object.assign({
             accountId: newAccount.id
         }, req.body))
+        let newRole = new Role({
+            accountId: newAccount.id,
+            programId: newProgram.id,
+            userId: newUser.id,
+            role: 'owner'
+        })
         
         errors = errors.concat(Account.validate(newAccount))
         errors = errors.concat(User.validate(newUser))
         errors = errors.concat(Program.validate(newProgram))
+        errors = errors.concat(Role.validate(newRole))
         errors = _.compact(errors)
         
         if (errors.length > 0) {
@@ -58,10 +68,11 @@ module.exports = class AccountController {
         let account = (await this.accountService.createAccount(newAccount)).viewable
         let user = (await this.userService.createUser(newUser)).viewable
         let program = (await this.programService.createProgram(newProgram)).viewable
+        let roles = (await this.roleService.createRole(newRole)).map(role => role.viewable)
 
         const accessToken = jwt.sign({ account, user }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' })
         const refreshToken = jwt.sign({ account, user }, process.env.REFRESH_TOKEN_SECRET_KEY, { expiresIn: '30d' })
 
-        res.status(201).json({ account, user, program, accessToken, refreshToken })
+        res.status(201).json({ account, user, roles, program, accessToken, refreshToken })
     }
 }
