@@ -1,7 +1,25 @@
 const jwt = require('jsonwebtoken')
+const RoleService = require('../services/roles')
+const roleService = new RoleService()
+const ROLES = {
+    ADMIN: 'admin',
+    OWNER: 'owner',
+    INSTRUCTOR: 'instructor',
+    STUDENT: 'student'
+}
 
 const adminOnly = (req, res, next) => {
-    if (!req.user || req.user.role !== 'admin') {
+    let isAdmin = false
+    let roles = req.roles || []
+
+    for (let i = 0; i < roles.length; i++) {
+        if (roles[i].role === ROLES.ADMIN) {
+            isAdmin = true
+            break
+        }
+    }
+
+    if (!isAdmin) {
         return res.status(403).json({ error: 'Unauthorized' })
     }
 
@@ -31,13 +49,17 @@ const validToken = async (req, res, next) => {
     }
 
     try {
-        let { user } = jwt.verify(req.headers['authorization'].replace('Bearer ', ''), process.env.TOKEN_SECRET_KEY)
+        let { user, account } = jwt.verify(req.headers['authorization'].replace('Bearer ', ''), process.env.TOKEN_SECRET_KEY)
 
         if (!user) {
             return res.status(401).json({ error: 'Invalid Token' })
         }
 
+        let roles = (await roleService.getRolesByUserId(user.id)).map(role => role.viewable)
+
         req.user = user
+        req.account = account
+        req.roles = roles
         next()
     } catch (err) {
         console.log(err)
@@ -45,9 +67,27 @@ const validToken = async (req, res, next) => {
     }
 }
 
-const allowedUserTypes = (...userTypes) => {
+const permissionCheck = (...allowedRoles) => {
     return (req, res, next) => {
-        if (!userTypes.includes(req.user.role) && req.user.role !== 'admin') {
+        let programId = req.query.programId || req.params.programId || req.body.programId
+        let roles = req.roles || []
+        let hasRole = false
+
+        if (!programId) {
+            return next({ code: 403, message: 'Unauthorized. Missing ProgramId in request.' })
+        }
+
+        for (let i=0; i < roles.length; i++) {
+            if (roles[i].role === ROLES.ADMIN) {
+                hasRole = true
+                break
+            } else if (roles[i].programId === programId && allowedRoles.includes(roles[i].role)) {
+                hasRole = true
+                break
+            }
+        }
+
+        if (!hasRole) {
             return next({ code: 403, message: 'Unauthorized. User type is not allowed to make this request.' })
         }
 
@@ -57,8 +97,9 @@ const allowedUserTypes = (...userTypes) => {
 
 module.exports = {
     adminOnly,
-    allowedUserTypes,
+    permissionCheck,
     asyncHandler,
     errorHandler,
-    validToken
+    validToken,
+    ROLES
 }
