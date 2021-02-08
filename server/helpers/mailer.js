@@ -2,7 +2,8 @@ const nodemailer = require('nodemailer')
 const smtpTransport = require('nodemailer-smtp-transport')
 const EmailTemplate = require('swig-email-templates')
 const TEMPLATES = {
-    forgotPassword: 'forgot-password.html'
+    forgotPassword: 'forgot-password.html',
+    userCreated: 'user-created.html'
 }
 
 class Mailer {
