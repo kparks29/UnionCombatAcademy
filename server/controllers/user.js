@@ -24,6 +24,61 @@ module.exports = class UserController {
         // this.router.put('/:user_id', asyncHandler(this.resetPassword.bind(this)))
         
         this.router.post('/', validToken, permissionCheck(ROLES.OWNER, ROLES.INSTRUCTOR), asyncHandler(this.createUser.bind(this)))
+        this.router.post('/:userId/programs/:programId', validToken, permissionCheck(ROLES.OWNER, ROLES.INSTRUCTOR), asyncHandler(this.addUserToProgram.bind(this)))
+    }
+
+    async hasPermission(role, programId, roles) {
+        let hasPermission = false
+
+        for (let i = 0; i < roles.length; i++) {
+            if (roles[i].role === ROLES.ADMIN) {
+                hasPermission = true
+                break
+            }
+
+            if (roles[i].programId === programId) {
+                if (roles[i].role === ROLES.OWNER && [ROLES.OWNER, ROLES.INSTRUCTOR, ROLES.STUDENT].includes(role)) {
+                    hasPermission = true
+                    break
+                } else if (roles[i].role === ROLES.INSTRUCTOR && [ROLES.INSTRUCTOR, ROLES.STUDENT].includes(role)) {
+                    hasPermission = true
+                    break
+                }
+            }
+        }
+
+        return hasPermission
+    }
+
+    async addUserToProgram(req, res, next) {
+        let newRole = new Role({
+            accountId: req.account.id,
+            programId: req.params.programId,
+            userId: req.params.userId,
+            role: req.body.role
+        })
+
+        let errors = Role.validate(newRole)
+
+        if (errors && errors.length > 0) {
+            return next({ code: 400, message: _.compact(errors).join('. ') })
+        }
+
+        // Check for existing role
+        let existingRoles = await this.roleService.getRolesByUserId(req.params.userId)
+        for (let i=0; i<existingRoles.length; i++) {
+            if (existingRoles[i].programId === req.params.programId) {
+                return next({ code: 400, message: `Unable to add user to program. User already belongs to program.` })
+            }
+        }
+
+        // Check if user is trying to make higher elevated user
+        if (!this.hasPermission(newRole.role, req.params.programId, req.roles)) {
+            return next({ code: 403, message: 'Unauthorized. User type is not allowed to make this request.' })
+        }
+
+        let roles = (await this.roleService.createRole(newRole)).map(role => role.viewable)
+        res.status(201).json({ roles })
     }
 
     async createUser(req, res, next) {
@@ -63,27 +118,7 @@ module.exports = class UserController {
         }
 
         // Check if user is trying to make higher elevated user
-        let hasPermission = false
-
-        for (let i=0; i<req.roles.length; i++) {
-            let role = req.roles[i]
-            if (role.role === ROLES.ADMIN) {
-                hasPermission = true
-                break
-            }
-
-            if (role.programId === program.id) {
-                if (role.role === ROLES.OWNER && [ROLES.OWNER, ROLES.INSTRUCTOR, ROLES.STUDENT].includes(newRole.role)) {
-                    hasPermission = true
-                    break
-                } else if (role.role === ROLES.INSTRUCTOR && [ROLES.INSTRUCTOR, ROLES.STUDENT].includes(newRole.role)) {
-                    hasPermission = true
-                    break
-                }
-            }
-        }
-
-        if (!hasPermission) {
+        if (!this.hasPermission(newRole.role, program.id, req.roles)) {
             return next({ code: 403, message: 'Unauthorized. User type is not allowed to make this request.' })
         }
 
