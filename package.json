@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node ./server/index.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "mysql2": "^2.2.5",
     "nodemailer": "^6.4.17",
     "nodemailer-smtp-transport": "^2.7.4",
+    "secure-random-password": "^0.2.2",
     "swig-email-templates": "^6.0.0",
     "uuid": "^8.3.2",
     "yargs": "^16.2.0"
