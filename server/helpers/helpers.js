@@ -20,7 +20,29 @@ const adminOnly = (req, res, next) => {
     }
 
     if (!isAdmin) {
-        return res.status(403).json({ error: 'Unauthorized' })
+        return res.status(403).json({ error: 'Unauthorized. User type is not allowed to make this request.' })
+    }
+
+    next()
+}
+
+const ownerOnly = (req, res, next) => {
+    let isAdmin = false
+    let isOwner = false
+    let roles = req.roles || []
+
+    for (let i = 0; i < roles.length; i++) {
+        if (roles[i].role === ROLES.ADMIN) {
+            isAdmin = true
+            break
+        } else if (roles[i].role === ROLES.OWNER) {
+            isAdmin = true
+            break
+        }
+    }
+
+    if (!isAdmin && !isOwner) {
+        return res.status(403).json({ error: 'Unauthorized. User type is not allowed to make this request.' })
     }
 
     next()
@@ -51,7 +73,7 @@ const validToken = async (req, res, next) => {
     try {
         let { user, account } = jwt.verify(req.headers['authorization'].replace('Bearer ', ''), process.env.TOKEN_SECRET_KEY)
 
-        if (!user) {
+        if (!user || !account) {
             return res.status(401).json({ error: 'Invalid Token' })
         }
 
@@ -97,6 +119,7 @@ const permissionCheck = (...allowedRoles) => {
 
 module.exports = {
     adminOnly,
+    ownerOnly,
     permissionCheck,
     asyncHandler,
     errorHandler,
