@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const _ = require('lodash')
-const { asyncHandler, validToken, ownerOnly } = require('../helpers/helpers')
+const { asyncHandler, validToken, ownerOnly, permissionCheck, ROLES } = require('../helpers/helpers')
 const Program = require('../models/program')
 const Role = require('../models/role')
 const ProgramService = require('../services/program')
@@ -12,7 +12,30 @@ module.exports = class ProgramController {
         this.programService = new ProgramService()
         this.roleService = new RoleService()
 
+        this.router.get('/', validToken, asyncHandler(this.getPrograms.bind(this)))
+        this.router.get('/:programId', validToken, permissionCheck(ROLES.OWNER, ROLES.INSTRUCTOR, ROLES.STUDENT), asyncHandler(this.getProgram.bind(this)))
         this.router.post('/', validToken, ownerOnly, asyncHandler(this.createProgram.bind(this)))
+    }
+
+
+    async getPrograms(req, res, next) {
+        let programs = (await this.programService.getProgramsByAccountId(req.account.id)).map(program => program.viewable)
+
+        res.status(200).json({ programs })
+    }
+
+    async getProgram(req, res, next) {
+        if (!req.params.programId || _.isEmpty(req.params.programId)) {
+            return next({ code: 400, message: 'Unable to get program. Missing programId' })
+        }
+
+        let program = await this.programService.getProgramById(req.params.programId)
+
+        if (!program) {
+            return next({ code: 400, message: `Unable to get program. Could not find program with id ${req.params.programId}.` })
+        }
+
+        res.status(200).json({ program: program.viewable })
     }
 
     async createProgram(req, res, next) {
