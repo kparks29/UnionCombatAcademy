@@ -8,7 +8,7 @@ const ROLES = {
     STUDENT: 'student'
 }
 
-const adminOnly = (req, res, next) => {
+const restrictToAdmin = (req, res, next) => {
     let isAdmin = false
     let roles = req.roles || []
 
@@ -26,7 +26,7 @@ const adminOnly = (req, res, next) => {
     next()
 }
 
-const ownerOnly = (req, res, next) => {
+const restrictToOwnerOrHigher = (req, res, next) => {
     let isAdmin = false
     let isOwner = false
     let roles = req.roles || []
@@ -46,6 +46,46 @@ const ownerOnly = (req, res, next) => {
     }
 
     next()
+}
+
+const restrictToInstructorOrHigher = (req, res, next) => {
+    let hasRole = false
+    let roles = req.roles || []
+
+    for (let i = 0; i < roles.length; i++) {
+        if (roles[i].role === ROLES.ADMIN) {
+            hasRole = true
+            break
+        } else if (roles[i].role === ROLES.OWNER) {
+            hasRole = true
+            break
+        } else if (roles[i].role === ROLES.INSTRUCTOR) {
+            hasRole = true
+            break
+        }
+    }
+
+    if (!hasRole) {
+        return res.status(403).json({ error: 'Unauthorized. User type is not allowed to make this request.' })
+    }
+
+    next()
+}
+
+const hasRoles = (roles, expectedRoles)  => {
+    let hasRole = false
+
+    for (let i = 0; i < roles.length; i++) {
+        if (roles[i].role === ROLES.ADMIN) {
+            hasRole = true
+            break
+        } else if (expectedRoles.includes(roles[i].role)) {
+            hasRole = true
+            break
+        }
+    }
+
+    return hasRole
 }
 
 // double arrow funciton just is a funciton that returns a function
@@ -118,11 +158,13 @@ const permissionCheck = (...allowedRoles) => {
 }
 
 module.exports = {
-    adminOnly,
-    ownerOnly,
+    restrictToAdmin,
+    restrictToOwnerOrHigher,
+    restrictToInstructorOrHigher,
     permissionCheck,
     asyncHandler,
     errorHandler,
     validToken,
+    hasRoles,
     ROLES
 }

@@ -25,7 +25,7 @@ module.exports = class RoleService {
 
     async createRole(data) {
         const sql = 'INSERT INTO Roles SET ?;'
-        const values = [_.pickBy(data, _.identity)]
+        const values = [_.pickBy(data, _.identity)] // _.pickBy ... _.identity removed null and undefined from object
 
         try {
             await database.query(sql, values)
@@ -43,6 +43,29 @@ module.exports = class RoleService {
             }
 
             return Promise.reject({ code: 500, message: 'Unable to create Role.' })
+        }
+    }
+
+    async removeRole(userId, programId) {
+        const sql = 'DELETE FROM Roles WHERE userId=? AND programId=?;'
+        const values = [userId, programId]
+
+        try {
+            await database.query(sql, values)
+            let roles = await this.getRolesByUserId(userId)
+
+            if (!roles) {
+                return Promise.reject({ code: 500, message: 'Unable to get roles after removal.' })
+            }
+
+            return roles
+        } catch (err) {
+            console.log(err)
+            if (typeof err === 'object') {
+                return Promise.reject(err)
+            }
+
+            return Promise.reject({ code: 500, message: 'Unable to remove role.' })
         }
     }
 }

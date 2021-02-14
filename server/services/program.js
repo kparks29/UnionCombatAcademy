@@ -57,7 +57,7 @@ module.exports = class ProgramService {
 
     async createProgram(data) {
         const sql = 'INSERT INTO Programs SET ?;'
-        const values = [_.pickBy(data, _.identity)]
+        const values = [_.pickBy(data, _.identity)] // _.pickBy ... _.identity removed null and undefined from object
 
         try {
             await database.query(sql, values)
@@ -75,6 +75,41 @@ module.exports = class ProgramService {
             }
 
             return Promise.reject({ code: 500, message: 'Unable to create Program.' })
+        }
+    }
+
+    async updateProgram(programId, data) {
+        const sql = 'UPDATE Programs SET ? WHERE id=?;'
+        const values = [_.pickBy(data, _.identity), programId] // _.pickBy ... _.identity removed null and undefined from object
+
+        try {
+            await database.query(sql, values)
+            let program = await this.getProgramById(programId)
+
+            if (!program) {
+                return Promise.reject({ code: 500, message: 'Unable to get Program after Update.' })
+            }
+
+            return program
+        } catch (err) {
+            console.log(err)
+            if (typeof err === 'object') {
+                return Promise.reject(err)
+            }
+
+            return Promise.reject({ code: 500, message: 'Unable to update Program.' })
+        }
+    }
+
+    async deleteProgram(programId) {
+        const sql = 'UPDATE Programs SET deletedAt=NOW() WHERE id=?;'
+        const values = [programId]
+
+        try {
+            await database.query(sql, values)
+        } catch (err) {
+            console.log(err)
+            return Promise.reject({ code: 500, message: 'Unable to delete Program.' })
         }
     }
 }
