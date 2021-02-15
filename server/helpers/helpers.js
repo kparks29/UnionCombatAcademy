@@ -88,6 +88,22 @@ const hasRoles = (roles, expectedRoles)  => {
     return hasRole
 }
 
+const hasPermission = (programId, roles, expectedRoles) => {
+    let hasRole = false
+
+    for (let i = 0; i < roles.length; i++) {
+        if (roles[i].role === ROLES.ADMIN) {
+            hasRole = true
+            break
+        } else if (roles[i].programId === programId && expectedRoles.includes(roles[i].role)) {
+            hasRole = true
+            break
+        }
+    }
+
+    return hasRole
+}
+
 // double arrow funciton just is a funciton that returns a function
 const asyncHandler = fn => (...args) => {
     const fnReturn = fn(...args) // creating a function with the secondary function arguments
@@ -166,5 +182,6 @@ module.exports = {
     errorHandler,
     validToken,
     hasRoles,
+    hasPermission,
     ROLES
 }

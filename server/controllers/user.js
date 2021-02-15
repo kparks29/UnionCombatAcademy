@@ -218,7 +218,7 @@ module.exports = class UserController {
 
         let user = (await this.userService.updateUser(req.params.userId, updatedUser)).viewable
 
-        res.status(201).json({ user })
+        res.status(200).json({ user })
     }
 
     async removeUser(req, res, next) {

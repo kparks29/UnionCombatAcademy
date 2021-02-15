@@ -59,4 +59,39 @@ module.exports = class NewsService {
             return Promise.reject({ code: 500, message: 'Unable to create News.' })
         }
     }
+
+    async updateNews(newsId, data) {
+        const sql = 'UPDATE News SET ? WHERE id=?;'
+        const values = [_.pickBy(data, _.identity), newsId] // _.pickBy ... _.identity removed null and undefined from object
+
+        try {
+            await database.query(sql, values)
+            let news = await this.getNewsById(newsId)
+
+            if (!news) {
+                return Promise.reject({ code: 500, message: 'Unable to get News after Update.' })
+            }
+
+            return news
+        } catch (err) {
+            console.log(err)
+            if (typeof err === 'object') {
+                return Promise.reject(err)
+            }
+
+            return Promise.reject({ code: 500, message: 'Unable to update News.' })
+        }
+    }
+
+    async deleteNews(newsId) {
+        const sql = 'DELETE FROM News WHERE id=?;'
+        const values = [newsId]
+
+        try {
+            await database.query(sql, values)
+        } catch (err) {
+            console.log(err)
+            return Promise.reject({ code: 500, message: 'Unable to delete News.' })
+        }
+    }
 }

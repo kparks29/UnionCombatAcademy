@@ -136,7 +136,7 @@ module.exports = class ProgramController {
 
         let program = (await this.programService.updateProgram(req.params.programId, updatedProgram)).viewable
 
-        res.status(201).json({ program })
+        res.status(200).json({ program })
     }
 
     async deleteProgram(req, res, next) {
