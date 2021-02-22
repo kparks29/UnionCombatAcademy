@@ -17,7 +17,7 @@ app.use(cors({
 }))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../app')));
+app.use(express.static(path.join(__dirname, '../app/build')));
 
 app.get('/api', asyncHandler(async (req, res) => {
     let results = await database.query('SELECT MAX(migration) as migration, version FROM SystemInfo', [])

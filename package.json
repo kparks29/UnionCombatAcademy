@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node ./server/index.js"
+    "start": "node ./server/index.js",
+    "build": "cd ./app && npm i && npm run build && cd .."
   },
   "repository": {
     "type": "git",
