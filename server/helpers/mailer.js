@@ -28,7 +28,7 @@ class Mailer {
         this.transporter.verify(error => {
             if (error) {
                 console.log('ERROR', error)
-                process.exit(1)
+                // process.exit(1)
             } else {
                 this.isReady = true
                 console.log('Mailer is ready to send email.')
@@ -42,6 +42,11 @@ class Mailer {
             to: to || process.env.DEFAULT_EMAIL,
             subject,
             html
+        }
+
+        if (!this.isReady) {
+            console.log('Message not sent', message)
+            return
         }
 
         let results = await this.transporter.sendMail(message)
@@ -69,6 +74,12 @@ class Mailer {
             text
         }
 
+
+        if (!this.isReady) {
+            console.log('Message not sent', message)
+            return
+        }
+
         let results = await this.transporter.sendMail(message)
 
         console.log('Message sent: ', results.messageId)
@@ -76,6 +87,9 @@ class Mailer {
     }
 
     close() {
+        if (!this.isReady) {
+            return
+        }
         this.transporter.close()
     }
 }
