@@ -33,6 +33,10 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/v1', new V1Router().router)
 
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../app/build', 'index.html'));
+})
+
 app.use(errorHandler)
 const server = http.createServer(app);
 server.listen(PORT, async () => console.log('Server listening on:' + PORT));
