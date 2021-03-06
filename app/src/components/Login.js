@@ -27,7 +27,7 @@ export const Login = () => {
 
             let currentUser = getCurrentUser()
 
-            if (_.isEmpty(currentProgram) || !currentUser.roles.map(role => role.programId).includes(currentProgram.id)) {
+            if (currentUser && (_.isEmpty(currentProgram) || !currentUser.roles.map(role => role.programId).includes(currentProgram.id))) {
                 if (currentUser.roles && currentUser.roles.length === 1) {
                     programs.forEach(program => {
                         if (program.id === currentUser.roles[0].programId) {

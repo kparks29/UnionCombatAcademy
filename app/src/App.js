@@ -1,71 +1,15 @@
-import React, { useContext } from 'react'
-import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom'
-import { Navbar, Nav } from 'react-bootstrap'
+import React from 'react'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import './App.css';
 import { Home } from './components/Home';
 import { Login } from './components/Login';
-import { AuthContextProvider, AuthContext } from './contexts/AuthContext';
+import { Navigation } from './components/Navigation';
+import { News } from './components/News';
+import { Rankings } from './components/Rankings';
+import { AuthContextProvider } from './contexts/AuthContext';
+import { NewsContextProvider } from './contexts/NewsContext';
 import { ProgramContextProvider } from './contexts/ProgramContext';
-import * as _ from 'lodash'
-import axios from 'axios'
-
-
-const Navigation = () => {
-  const history = useHistory()
-  const { isAuthenticated, logout, currentUser, refreshToken } = useContext(AuthContext)
-
-  const interceptor = axios.interceptors.response.use(
-    response => response,
-    async error => {
-      // Reject promise if usual error
-      if (error.response.status !== 401) {
-        return Promise.reject(error);
-      }
-
-      axios.interceptors.response.eject(interceptor);
-
-      return refreshToken().then(response => {
-        error.response.config.headers['Authorization'] = `Bearer ${response.accessToken}`;
-        return axios(error.response.config);
-      }).catch(error => {
-        // history.push('/login');
-        return Promise.reject(error);
-      })
-    }
-  )
-
-  const navigateTo = (location) => {
-    if (location) {
-      history.push(location)
-    }
-  }
-
-  const handleLogout = () => {
-    logout()
-    navigateTo('/login')
-  }
-  
-  
-
-  const loginButton = <Nav.Item><Nav.Link onClick={() => navigateTo('/login')}>Login</Nav.Link></Nav.Item>
-  const logoutButton = <Nav.Item><Nav.Link onClick={() => handleLogout()}>Logout</Nav.Link></Nav.Item>
-
-  return (
-    <Navbar expand="lg" bg="dark" variant="dark" className="justify-content-between" collapseOnSelect>
-      <Navbar.Brand onClick={() => navigateTo('/')}>Union Combat Academy</Navbar.Brand>
-      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-      <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
-        <Nav >
-          {/* <Nav.Item>
-            <Nav.Link onClick={() => navigateTo('/')}>Home</Nav.Link>
-          </Nav.Item> */}
-          <Nav.Item><Nav.Link disabled>{!_.isEmpty(currentUser) ? `Welcome ${currentUser.firstName || ''} ${currentUser.lastName || ''}` : ''}</Nav.Link></Nav.Item>
-          {isAuthenticated ? logoutButton : loginButton}
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
-  )
-}
+import { UserContextProvider } from './contexts/UserContext';
 
 function App() {
   return (
@@ -73,11 +17,17 @@ function App() {
         <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
           <AuthContextProvider>
           <ProgramContextProvider>
+          <NewsContextProvider>
+          <UserContextProvider>
             <Navigation />
               <Switch>
                 <Route path="/" exact component={Home} />
                 <Route path="/login" component={Login} />
+                <Route path="/news" component={News} />
+                <Route path="/rankings" component={Rankings} />
               </Switch>
+          </UserContextProvider>
+          </NewsContextProvider>
           </ProgramContextProvider>
           </AuthContextProvider>
         </BrowserRouter>
