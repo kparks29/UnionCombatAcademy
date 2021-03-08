@@ -7,9 +7,11 @@ import * as _ from 'lodash'
 
 export const Rankings = () => {
     const { isAuthenticated, currentProgram } = useContext(AuthContext)
-    const { getUsers } = useContext(UserContext)
+    const { getUserByProgram } = useContext(UserContext)
     const [ users, setUsers ] = useState([])
     const [ belts, setBelts ] = useState({})
+    const [ isLoading, setIsLoading] = useState(true)
+
     const beltColors = [
         'white', 'yellow', 'orange', 'green', 'gray', 'blue', 
         'black', 'blackred', 'blackwhite', 'red'
@@ -17,11 +19,13 @@ export const Rankings = () => {
 
     useEffect(() => {
         if (isAuthenticated && currentProgram) {
-            getUsers(currentProgram.id).then(results => {
+            getUserByProgram(currentProgram.id).then(results => {
+                setIsLoading(false)
                 if (results) {
-                    setUsers(results)
+                    setUsers(results.filter(user => user.type === 'student'))
                 }
             }).catch(err => {
+                setIsLoading(false)
                 console.log(err)
             })
         }
@@ -38,15 +42,18 @@ export const Rankings = () => {
     return (
         <div className="Rankings">
             <h2>Rankings</h2>
-            {users.map((user, i) => {
-                return <Card key={i}>
-                    <Card.Body>
-                        <Card.Title>{user.firstName} {user.lastName}</Card.Title>
-                        {!belts[user.beltColor] ? '' : <img src={belts[user.beltColor]} alt={user.beltColor + ' belt'} />}
-                        <br />{user.stripeCount} Stripes
-                    </Card.Body>
-                </Card>
-            })}
+            {isLoading ? <h4>Loading...</h4> :
+                !users || users.length === 0 ? <h4>No Students added yet</h4> :
+                users.map((user, i) => {
+                    return <Card key={i}>
+                        <Card.Body>
+                            <Card.Title>{user.firstName} {user.lastName}</Card.Title>
+                            {!belts[user.beltColor] ? '' : <img src={belts[user.beltColor]} alt={user.beltColor + ' belt'} />}
+                            <br />{user.stripeCount} Stripes
+                        </Card.Body>
+                    </Card>
+                })
+            }
 
         </div>
     )

@@ -3,6 +3,7 @@ import './News.css'
 import { AuthContext } from '../contexts/AuthContext'
 import { NewsContext } from '../contexts/NewsContext'
 import { Card } from 'react-bootstrap'
+import backgroundImage from '../assets/JJJimage.png'
 
 export const News = () => {
     const { isAuthenticated, currentProgram } = useContext(AuthContext)
@@ -20,7 +21,7 @@ export const News = () => {
     }, [isAuthenticated, currentProgram])
 
     return (
-        <div className="News">
+        <div className="News" style={{ backgroundImage: `url(${backgroundImage})` }}>
             <h2>Latest News</h2>
                 {news.map((article, i) => {
                     return <Card key={i}>

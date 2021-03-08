@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import './Home.css'
 import { AuthContext } from '../contexts/AuthContext'
-import logo from '../assets/unionCombatLogo.png'
+import backgroundImage from '../assets/beltbackground.png'
 import { Card } from 'react-bootstrap'
 import * as _ from 'lodash'
 
@@ -22,8 +22,7 @@ export const Home = () => {
     }, [isAuthenticated, history, currentUser])
 
     return (
-        <div className="Home">
-            <img src={logo} className="App-logo mb-4" alt="logo" />
+        <div className="Home" style={{ backgroundImage: `url(${backgroundImage})` }}>
             {_.isEmpty(currentUser) ? '' : <Card bg="dark" text="white">
                 <Card.Title>{currentUser.firstName} {currentUser.lastName}</Card.Title>
                 <Card.Text>

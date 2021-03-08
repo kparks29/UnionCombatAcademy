@@ -9,9 +9,9 @@ export const UserContextProvider = (props) => {
     const [users, setUsers] = useState([])
 
 
-    const getUsers = async (programId) => {
+    const getUserByProgram = async (programId) => {
         let token = getAccessToken()
-        let results = await axios.get(`/users?programId=${programId}`, {
+        let results = await axios.get(`/programs/${programId}/users`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -27,7 +27,7 @@ export const UserContextProvider = (props) => {
     }
 
     return (
-        <UserContext.Provider value={{ users, getUsers }}>
+        <UserContext.Provider value={{ users, getUserByProgram }}>
             {props.children}
         </UserContext.Provider>
     )

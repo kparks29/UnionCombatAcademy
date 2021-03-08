@@ -4,6 +4,7 @@ import { Navbar, Nav, NavDropdown } from 'react-bootstrap'
 import * as _ from 'lodash'
 import axios from 'axios'
 import { AuthContext } from '../contexts/AuthContext'
+import logo from '../assets/unionCombatLogo.png'
 
 export const Navigation = () => {
     const history = useHistory()
@@ -66,8 +67,8 @@ export const Navigation = () => {
     const logoutButton = <NavDropdown.Item key="logout" onClick={() => handleLogout()}>Logout</NavDropdown.Item>
 
     return (
-        <Navbar expand="lg" bg="dark" variant="dark" className="justify-content-between" collapseOnSelect animation="false">
-            <Navbar.Brand onClick={() => navigateTo('/')}>Union Combat Academy</Navbar.Brand>
+        <Navbar expand="lg" bg="light" variant="light" className="justify-content-between" collapseOnSelect animation="false">
+            <Navbar.Brand onClick={() => navigateTo('/')}><img src={logo} height="40" /></Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end" animation="false">
                 <Nav>
