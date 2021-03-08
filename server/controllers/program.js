@@ -51,6 +51,7 @@ module.exports = class ProgramController {
         }
 
         let attendance = {}
+        let roles = {}
 
         let results = await this.attendanceService.getAttendanceByProgramId(req.params.programId) || []
         results.forEach(item => {
@@ -60,9 +61,15 @@ module.exports = class ProgramController {
                 attendance[item.userId].push(item.viewable)
             }
         })
+
+        let roleResults = await this.roleService.getRolesByProgramId(req.params.programId) || []
+        roleResults.forEach(role => {
+            roles[role.userId] = role.role
+        })
         let users = (await this.userService.getUsersByProgramId(req.params.programId)).map(item => {
             let user = item.viewable
             user.attendance = attendance[user.id] || []
+            user.type = roles[user.id]
             return user
         })
 

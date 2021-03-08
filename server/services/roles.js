@@ -23,6 +23,24 @@ module.exports = class RoleService {
         }
     }
 
+    async getRolesByProgramId(programId) {
+        const sql = 'SELECT * FROM Roles WHERE programId=?;'
+        const values = [programId]
+
+        try {
+            let results = await database.query(sql, values)
+
+            if (results && results.length > 0) {
+                return results.map(result => new Role(result))
+            }
+
+            return
+        } catch (err) {
+            console.log(err)
+            return Promise.reject({ code: 500, message: 'Unable to get roles.' })
+        }
+    }
+
     async createRole(data) {
         const sql = 'INSERT INTO Roles SET ?;'
         const values = [_.pickBy(data, _.identity)] // _.pickBy ... _.identity removed null and undefined from object
