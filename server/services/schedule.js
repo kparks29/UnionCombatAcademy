@@ -24,7 +24,7 @@ module.exports = class ScheduleService {
     }
 
     async getSchedulesByProgramId(programId) {
-        const sql = 'SELECT * FROM Schedules WHERE programId=?;'
+        const sql = 'SELECT * FROM Schedules WHERE programId=? ORDER BY STR_TO_DATE(date, "%m-%d-%Y") ASC;'
         const values = [programId]
 
         try {
