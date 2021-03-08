@@ -24,7 +24,7 @@ module.exports = class NewsService {
     }
 
     async getNewsByProgramId(programId) {
-        const sql = 'SELECT * FROM News WHERE programId=?;'
+        const sql = 'SELECT * FROM News WHERE programId=? ORDER BY createdAt DESC;'
         const values = [programId]
 
         try {
