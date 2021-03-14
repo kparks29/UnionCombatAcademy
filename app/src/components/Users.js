@@ -91,12 +91,7 @@ export const Users = () => {
             setShowAddEditUserModal(false)
             setAlert('')
         } catch (error) {
-            console.log(error)
-            // setAlert(
-            //     <Alert variant="danger">
-            //         {error}
-            //     </Alert>
-            // )
+            setAlert(error)
         }
     }
 
