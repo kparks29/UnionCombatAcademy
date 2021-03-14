@@ -5,7 +5,21 @@
     height: calc(100% - 66px);
 }
 
-.News .card {
+.News .list-group {
     width: 75%;
     margin: 0 auto;
+}
+
+.News h2 {
+    position: relative;
+}
+
+.News h2 button {
+    position: absolute;
+    right: 30px;
+}
+
+.News .news:hover {
+    background-color: lightblue;
+    cursor: pointer;
 }
