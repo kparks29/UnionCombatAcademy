@@ -14,7 +14,7 @@ export const Rankings = () => {
 
     const beltColors = [
         'white', 'yellow', 'orange', 'green', 'gray', 'blue', 
-        'black', 'blackred', 'blackwhite', 'red'
+        'black', 'blackred', 'whitered', 'red'
     ]
 
     useEffect(() => {
