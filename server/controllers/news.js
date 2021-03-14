@@ -28,18 +28,18 @@ module.exports = class NewsController {
     }
 
     async createNews(req, res, next) {
-        if (!req.query.programId || _.isEmpty(req.query.programId)) {
-            return next({ code: 400, message: 'Unable to create news. Missing query param programId' })
+        if (!req.body.programId || _.isEmpty(req.body.programId)) {
+            return next({ code: 400, message: 'Unable to create news. Missing programId in body of request' })
         }
 
-        let existingProgram = await this.programService.getProgramById(req.query.programId)
+        let existingProgram = await this.programService.getProgramById(req.body.programId)
 
         if (!existingProgram) {
-            return next({ code: 400, message: `No program with the programId ${req.query.programId} exists.` })
+            return next({ code: 400, message: `No program with the programId ${req.body.programId} exists.` })
         }
 
         let newNews = new News(Object.assign({}, req.body, {
-            programId: req.query.programId,
+            programId: req.body.programId,
             createdBy: req.user.id,
             updatedBy: req.user.id
         }))
@@ -65,14 +65,14 @@ module.exports = class NewsController {
             return next({ code: 400, message: `No news with the newsId ${req.params.newsId} exists.` })
         }
 
-        if (!req.query.programId || _.isEmpty(req.query.programId)) {
+        if (!req.body.programId || _.isEmpty(req.body.programId)) {
             return next({ code: 400, message: 'Unable to update news. Missing programId' })
         }
 
-        let existingProgram = await this.programService.getProgramById(req.query.programId)
+        let existingProgram = await this.programService.getProgramById(req.body.programId)
 
         if (!existingProgram) {
-            return next({ code: 400, message: `No program with the programId ${req.query.programId} exists.` })
+            return next({ code: 400, message: `No program with the programId ${req.body.programId} exists.` })
         }
 
         // _.pickBy ... _.identity removed null and undefined from object
