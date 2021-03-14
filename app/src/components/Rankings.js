@@ -7,7 +7,7 @@ import * as _ from 'lodash'
 
 export const Rankings = () => {
     const { isAuthenticated, currentProgram } = useContext(AuthContext)
-    const { getUserByProgram } = useContext(UserContext)
+    const { getUsersByProgram } = useContext(UserContext)
     const [ users, setUsers ] = useState([])
     const [ belts, setBelts ] = useState({})
     const [ isLoading, setIsLoading] = useState(true)
@@ -19,7 +19,7 @@ export const Rankings = () => {
 
     useEffect(() => {
         if (isAuthenticated && currentProgram) {
-            getUserByProgram(currentProgram.id).then(results => {
+            getUsersByProgram(currentProgram.id).then(results => {
                 setIsLoading(false)
                 if (results) {
                     setUsers(results.filter(user => user.type === 'student'))
