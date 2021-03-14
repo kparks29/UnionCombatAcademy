@@ -1,0 +1,25 @@
+.Users {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: calc(100% - 66px);
+}
+
+.Users .list-group {
+    width: 75%;
+    margin: 0 auto;
+}
+
+.Users h2 {
+    position: relative;
+}
+
+.Users h2 button {
+    position: absolute;
+    right: 30px;
+}
+
+.Users .user:hover {
+    background-color: lightblue;
+    cursor: pointer;
+}
