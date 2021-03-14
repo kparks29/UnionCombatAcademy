@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import './Users.css'
-import { Button, Modal, Form, Col } from 'react-bootstrap'
+import React, { useEffect, useRef, useState } from 'react'
+import { Button, Modal, Form, Col, Alert } from 'react-bootstrap'
 import * as _ from 'lodash'
 
 export const AddEditUserModal = (props) => {
+    const formRef = useRef()
     const [validated, setValidated] = useState(false);
     const [belts] = useState([
         { label: 'White', value: 'white' }, { label: 'Gray', value: 'gray' }, { label: 'Yellow', value: 'yellow' },
@@ -13,10 +13,22 @@ export const AddEditUserModal = (props) => {
     ])
     const [userTypes, setUserTypes] = useState([])
     const [user, setUser] = useState({})
+    const [alert, setAlert] = useState({})
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [email, setEmail] = useState('')
+    const [beltColor, setBeltColor] = useState('white')
+    const [stripeCount, setStripeCount] = useState(0)
+    const [role, setRole] = useState('student')
+
 
     useEffect(() => {
         setUserTypes(props.userTypes || [])
     }, [props.userTypes])
+
+    useEffect(() => {
+        setAlert(props.alert)
+    }, [props.alert])
 
     useEffect(() => {
         if (props.user) {
@@ -33,11 +45,25 @@ export const AddEditUserModal = (props) => {
             }
 
             setUser(user)
+            setFirstName(user.firstName || '')
+            setLastName(user.lastName || '')
+            setEmail(user.email || '')
+            setBeltColor(user.beltColor || 'white')
+            setStripeCount(user.stripeCount || 0)
+            setRole(user.role || 'student')
         }
     }, [props.user])
 
     const onShow = () => {
         setValidated(false)
+        setAlert('')
+        setUser(user || {})
+        setFirstName(user.firstName || '')
+        setLastName(user.lastName || '')
+        setEmail(user.email || '')
+        setBeltColor(user.beltColor || 'white')
+        setStripeCount(user.stripeCount || 0)
+        setRole(user.role || 'student')
     }
 
     const onAddEditUserSubmit = (event) => {
@@ -51,12 +77,12 @@ export const AddEditUserModal = (props) => {
         }
 
         props.onSubmit(Object.assign({}, user, {
-            firstName: _.get(form, 'elements.firstName.value'),
-            lastName: _.get(form, 'elements.lastName.value'),
-            email: _.get(form, 'elements.email.value'),
-            beltColor: _.get(form, 'elements.beltColor.value'),
-            stripeCount: parseInt(_.get(form, 'elements.stripeCount.value')),
-            role: _.get(form, 'elements.role.value')
+            firstName,
+            lastName,
+            email,
+            beltColor,
+            stripeCount,
+            role,
         }))
     }
 
@@ -74,29 +100,26 @@ export const AddEditUserModal = (props) => {
             </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            {props.alert}
-            <Form noValidate validated={validated} onSubmit={onAddEditUserSubmit}>
-                <p>
-                    Add New or Existing User
-                </p>
+            {!_.isEmpty(alert) ? <Alert variant="danger">{alert}</Alert> : ''}
+            <Form noValidate validated={validated} onSubmit={onAddEditUserSubmit} ref={formRef}>
                 <Form.Row>
                     <Form.Group as={Col} controlId="firstName">
                         <Form.Label>First Name</Form.Label>
-                        <Form.Control type="text" placeholder="Enter First Name" required defaultValue={user.firstName} />
+                        <Form.Control type="text" placeholder="Enter First Name" required onChange={(e) => setFirstName(e.target.value)} value={firstName} />
                     </Form.Group>
                     <Form.Group as={Col} controlId="lastName">
                         <Form.Label>Last Name</Form.Label>
-                        <Form.Control type="text" placeholder="Enter Last Name" required defaultValue={user.lastName} />
+                        <Form.Control type="text" placeholder="Enter Last Name" required onChange={(e) => setLastName(e.target.value)} value={lastName} />
                     </Form.Group>
                 </Form.Row>
                 <Form.Group controlId="email">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" placeholder="Enter Email" required defaultValue={user.email} />
+                    <Form.Control type="email" placeholder="Enter Email" required onChange={(e) => setEmail(e.target.value)} value={email} />
                 </Form.Group>
                 <Form.Row>
                     <Form.Group as={Col} controlId="beltColor">
                         <Form.Label>Belt Color</Form.Label>
-                        <Form.Control as="select" required defaultValue={user.beltColor}>
+                        <Form.Control as="select" required onChange={(e) => setBeltColor(e.target.value)} value={beltColor}>
                             {belts.map((belt, i) => {
                                 return <option key={i} value={belt.value}>{belt.label}</option>
                             })}
@@ -104,12 +127,12 @@ export const AddEditUserModal = (props) => {
                     </Form.Group>
                     <Form.Group as={Col} controlId="stripeCount">
                         <Form.Label>Number of Stripes</Form.Label>
-                        <Form.Control type="number" placeholder="Number of Stripes" required defaultValue={user.stripeCount} />
+                        <Form.Control type="number" placeholder="Number of Stripes" required onChange={(e) => setStripeCount(e.target.value)} value={stripeCount} />
                     </Form.Group>
                 </Form.Row>
                 <Form.Group controlId="role">
                     <Form.Label>User Type</Form.Label>
-                    <Form.Control as="select" required defaultValue={user.role}>
+                    <Form.Control as="select" required onChange={(e) => setRole(e.target.value)} value={role}>
                         {userTypes.map((type, i) => {
                             return <option key={i} value={type.value}>{type.label}</option>
                         })}
