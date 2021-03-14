@@ -135,7 +135,7 @@ module.exports = class UserController {
 
         // Check for existing user
         if (await this.userService.getUserByEmail(newUser.email)) {
-            return next({ code: 400, message: `Unable to create account. User with the email ${newUser.email} already exists.` })
+            return next({ code: 400, message: `Unable to create user. User with the email ${newUser.email} already exists.` })
         }
 
         // Check if user is trying to make higher elevated user
@@ -217,8 +217,9 @@ module.exports = class UserController {
         }
 
         let user = (await this.userService.updateUser(req.params.userId, updatedUser)).viewable
+        let roles = (await this.roleService.getRolesByUserId(req.params.userId)).map(role => role.viewable)
 
-        res.status(200).json({ user })
+        res.status(200).json({ user, roles })
     }
 
     async removeUser(req, res, next) {
