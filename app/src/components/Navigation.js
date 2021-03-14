@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap'
 import * as _ from 'lodash'
@@ -9,6 +9,7 @@ import logo from '../assets/unionCombatLogo.png'
 export const Navigation = () => {
     const history = useHistory()
     const { isAuthenticated, logout, currentUser, currentProgram, refreshToken } = useContext(AuthContext)
+    const [ showAdminLinks, setShowAdminLinks ] = useState(false)
     const navLinks = [
         { label: 'News', url: '/news' },
         { label: 'Rankings', url: '/rankings' },
@@ -49,15 +50,11 @@ export const Navigation = () => {
         navigateTo('/login')
     }
 
-    let adminItems = ''
-
     useEffect(() => {
         if (isAuthenticated && !_.isEmpty(currentUser) && !_.isEmpty(currentProgram)) {
             currentUser.roles.forEach(role => {
-                if (role.programId === currentProgram.id && ['teacher', 'owner', 'admin'].includes(role.role)) {
-                    adminItems = <NavDropdown title="Admin">{adminLinks.map(link => {
-                        return <NavDropdown.Item key={link.url}><Nav.Link onClick={() => navigateTo(link.url)}>{link.label}</Nav.Link></NavDropdown.Item>
-                    })}</NavDropdown>
+                if (role.programId === currentProgram.id && ['instructor', 'owner', 'admin'].includes(role.role)) {
+                    setShowAdminLinks(true)
                 }
             })
         }
@@ -72,11 +69,16 @@ export const Navigation = () => {
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end" animation="false">
                 <Nav>
-                    {isAuthenticated}
                     {isAuthenticated ? navLinks.map(link => {
                         return <Nav.Item key={link.url}><Nav.Link onClick={() => navigateTo(link.url)}>{link.label}</Nav.Link></Nav.Item>
                     }) : ''}
-                    {adminItems}
+                    {isAuthenticated && showAdminLinks ? 
+                        <NavDropdown title="Admin" bg="dark" variant="dark">
+                            {adminLinks.map(link => {
+                                return <NavDropdown.Item key={link.url}><Nav.Link onClick={() => navigateTo(link.url)}>{link.label}</Nav.Link></NavDropdown.Item>
+                            })}
+                        </NavDropdown>
+                    : ''}
                     {!_.isEmpty(currentUser) && isAuthenticated ?
                         <NavDropdown bg="dark" variant="dark" title={`Welcome ${currentUser.firstName || ''} ${currentUser.lastName || ''}`}>
                             {logoutButton}

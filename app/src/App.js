@@ -12,6 +12,7 @@ import { NewsContextProvider } from './contexts/NewsContext';
 import { ProgramContextProvider } from './contexts/ProgramContext';
 import { UserContextProvider } from './contexts/UserContext';
 import { ScheduleContextProvider } from './contexts/ScheduleContext';
+import { Users } from './components/Users';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/news" component={News} />
                 <Route path="/rankings" component={Rankings} />
                 <Route path="/schedule" component={Schedule} />
+                <Route path="/users" component={Users} />
               </Switch>
           </ScheduleContextProvider>
           </UserContextProvider>
