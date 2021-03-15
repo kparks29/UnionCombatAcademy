@@ -28,18 +28,17 @@ module.exports = class ScheduleController {
     }
 
     async createSchedule(req, res, next) {
-        if (!req.query.programId || _.isEmpty(req.query.programId)) {
-            return next({ code: 400, message: 'Unable to create schedule. Missing query param programId' })
+        if (!req.body.programId || _.isEmpty(req.body.programId)) {
+            return next({ code: 400, message: 'Unable to create schedule. Missing body param programId' })
         }
 
-        let existingProgram = await this.programService.getProgramById(req.query.programId)
+        let existingProgram = await this.programService.getProgramById(req.body.programId)
 
         if (!existingProgram) {
-            return next({ code: 400, message: `No program with the programId ${req.query.programId} exists.` })
+            return next({ code: 400, message: `No program with the programId ${req.body.programId} exists.` })
         }
 
         let newSchedule = new Schedule(Object.assign({}, req.body, {
-            programId: req.query.programId,
             createdBy: req.user.id,
             updatedBy: req.user.id
         }))
@@ -65,14 +64,14 @@ module.exports = class ScheduleController {
             return next({ code: 400, message: `No schedule with the scheduleId ${req.params.scheduleId} exists.` })
         }
 
-        if (!req.query.programId || _.isEmpty(req.query.programId)) {
+        if (!req.body.programId || _.isEmpty(req.body.programId)) {
             return next({ code: 400, message: 'Unable to update schedule. Missing programId' })
         }
 
-        let existingProgram = await this.programService.getProgramById(req.query.programId)
+        let existingProgram = await this.programService.getProgramById(req.body.programId)
 
         if (!existingProgram) {
-            return next({ code: 400, message: `No program with the programId ${req.query.programId} exists.` })
+            return next({ code: 400, message: `No program with the programId ${req.body.programId} exists.` })
         }
 
         // _.pickBy ... _.identity removed null and undefined from object
