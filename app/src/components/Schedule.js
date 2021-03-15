@@ -5,6 +5,7 @@ import { ScheduleContext } from '../contexts/ScheduleContext'
 import { Container, Row, Col, Button, Card } from 'react-bootstrap'
 import * as _ from 'lodash'
 import { AddEditScheduleModal } from './AddEditScheduleModal'
+import backgroundImage from '../assets/wood-background.png'
 
 export const Schedule = () => {
     const { isAuthenticated, currentProgram, currentUser } = useContext(AuthContext)
@@ -94,7 +95,7 @@ export const Schedule = () => {
     }
 
     return (
-        <div className="Schedules">
+        <div className="Schedules" style={{ backgroundImage: `url(${backgroundImage})` }}>
             <h2>Schedule {isAdmin ? <Button onClick={onAddScheduleClicked}>Add Schedule</Button> : ''}</h2>
             <AddEditScheduleModal
                 show={showAddEditScheduleModal} onHide={() => setShowAddEditScheduleModal(false)}

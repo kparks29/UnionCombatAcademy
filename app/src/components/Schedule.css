@@ -24,6 +24,14 @@
     cursor: pointer;
 }
 
+.Schedules .card {
+    background-color: rgba(255, 255, 255, 0.75);
+}
+
+.Schedules .card-body {
+    padding: 10px;
+}
+
 .Schedules .card-text p {
     text-align: justify;
     margin-bottom: 5px;
