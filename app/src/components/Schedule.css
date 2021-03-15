@@ -1,0 +1,25 @@
+.Schedules {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: calc(100% - 66px);
+}
+
+.Schedules .list-group {
+    width: 75%;
+    margin: 0 auto;
+}
+
+.Schedules h2 {
+    position: relative;
+}
+
+.Schedules h2 button {
+    position: absolute;
+    right: 30px;
+}
+
+.Schedules .schedule:hover {
+    background-color: lightblue;
+    cursor: pointer;
+}
