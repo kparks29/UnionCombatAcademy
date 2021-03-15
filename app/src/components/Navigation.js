@@ -72,7 +72,7 @@ export const Navigation = () => {
                     {isAuthenticated ? navLinks.map(link => {
                         return <Nav.Item key={link.url}><Nav.Link onClick={() => navigateTo(link.url)}>{link.label}</Nav.Link></Nav.Item>
                     }) : ''}
-                    {isAuthenticated && showAdminLinks ? 
+                    {showAdminLinks ? 
                         <NavDropdown title="Admin" bg="dark" variant="dark">
                             {adminLinks.map(link => {
                                 return <NavDropdown.Item key={link.url} onClick={() => navigateTo(link.url)}>{link.label}</NavDropdown.Item>
