@@ -64,8 +64,21 @@ export const UserContextProvider = (props) => {
         }
     }
 
+    const checkInUser = async (data) => {
+        let token = getAccessToken()
+        let results = await axios.post(`/attendance`, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).catch(err => {
+            return Promise.reject(_.get(err, 'response.data.error') || 'Unable to check in User')
+        })
+
+        return results.data.attendance
+    }
+
     return (
-        <UserContext.Provider value={{ getUsersByProgram, getUsersByAccount, createUser, updateUser }}>
+        <UserContext.Provider value={{ getUsersByProgram, getUsersByAccount, createUser, updateUser, checkInUser }}>
             {props.children}
         </UserContext.Provider>
     )
