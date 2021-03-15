@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import './Schedule.css'
 import { AuthContext } from '../contexts/AuthContext'
 import { ScheduleContext } from '../contexts/ScheduleContext'
-import { Container, Row, Col, Button } from 'react-bootstrap'
+import { Container, Row, Col, Button, Card } from 'react-bootstrap'
 import * as _ from 'lodash'
 import { AddEditScheduleModal } from './AddEditScheduleModal'
 
@@ -20,7 +20,15 @@ export const Schedule = () => {
         if (isAuthenticated && currentProgram && currentUser) {
             getSchedulesByProgramId(currentProgram.id).then(results => {
                 if (results) {
-                    setSchedules(results)
+                    let schedules = {}
+                    results.forEach(schedule => {
+                        if (schedules[schedule.day]) {
+                            schedules[schedule.day].push(schedule)
+                        } else {
+                            schedules[schedule.day] = [schedule]
+                        }
+                    })
+                    setSchedules(schedules)
                 }
             }).catch(err => {
                 console.log(err)
@@ -48,14 +56,18 @@ export const Schedule = () => {
             if (data && data.id) {
                 schedule = await updateSchedule(data)
 
-                for (let i = 0; i < schedules.length; i++) {
+                for (let i = 0; i < schedules[schedule.day].length; i++) {
                     if (schedule.id === schedules[i].id) {
                         schedules[i] = schedule
                     }
                 }
             } else {
                 schedule = await createSchedule(data)
-                schedules.push(schedule)
+                if (schedules[schedule.day]) {
+                    schedules[schedule.day].push(schedule)
+                } else {
+                    schedules[schedule.day] = [schedule]
+                }
             }
 
             setSelectedSchedule({
@@ -90,11 +102,22 @@ export const Schedule = () => {
                 alert={alert}
             ></AddEditScheduleModal>
             <Container>
-            {schedules.map((schedule, i) => {
-                return <Row key={i} className={isAdmin ? 'schedule' : ''} onClick={() => onEditScheduleClicked(schedule)}>
-                    <Col>{schedule.date}: {schedule.start} - {schedule.end}</Col>
+                <Row>
+                    {Object.keys(schedules).map(key => {
+                        return <Card key={key} as={Col} md={4}>
+                            <Card.Body>
+                                <Card.Title>{key}</Card.Title>
+                                <Card.Text>
+                                    {schedules[key].map((schedule, i) => {
+                                        return <p key={i} className={isAdmin ? 'schedule' : ''} onClick={() => onEditScheduleClicked(schedule)}>
+                                            <strong>{schedule.start} to {schedule.end}</strong>{schedule.description ? ' - ' + schedule.description : ''}
+                                        </p>
+                                    })}
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+                    })}
                 </Row>
-            })}
             </Container>
 
         </div>

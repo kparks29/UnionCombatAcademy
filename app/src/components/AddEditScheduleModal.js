@@ -6,15 +6,19 @@ export const AddEditScheduleModal = (props) => {
     const modalRef = useRef()
     const [validated, setValidated] = useState(false)
     const [schedule, setSchedule] = useState({})
-    const [date, setDate] = useState('')
+    const [day, setDay] = useState('')
     const [start, setStart] = useState('')
     const [end, setEnd] = useState('')
+    const [description, setDescription] = useState('')
     const [alert, setAlert] = useState('')
+
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
     useEffect(() => {
         if (props.schedule) {
             setSchedule(props.schedule || {})
-            setDate(props.schedule.date || '')
+            setDay(props.schedule.day || days[0])
+            setDescription(props.schedule.description || '')
             setStart(props.schedule.start || '')
             setEnd(props.schedule.end || '')
         }
@@ -28,7 +32,8 @@ export const AddEditScheduleModal = (props) => {
         setValidated(false)
         setAlert('')
         setSchedule(props.schedule || {})
-        setDate(props.schedule.date || '')
+        setDay(props.schedule.day || days[0])
+        setDescription(props.schedule.description || '')
         setStart(props.schedule.start || '')
         setEnd(props.schedule.end || '')
     }
@@ -43,10 +48,11 @@ export const AddEditScheduleModal = (props) => {
             return
         }
 
-        console.log(date)
+        console.log(day)
 
         props.onSubmit(Object.assign({}, schedule, {
-            date,
+            day,
+            description,
             start,
             end
         }))
@@ -69,10 +75,20 @@ export const AddEditScheduleModal = (props) => {
             {!_.isEmpty(alert) ? <Alert variant="danger">{alert}</Alert> : ''}
             <Form noValidate validated={validated} onSubmit={onSubmit} ref={modalRef}>
                 <Form.Row>
-                    <Form.Group as={Col} controlId="title">
-                        <Form.Label>Schedule Date</Form.Label>
-                        <Form.Control type="text" placeholder="Enter Date MM/DD/YYYY" required onChange={(e) => setDate(e.target.value)} value={date} />
+                    <Form.Group as={Col} controlId="day">
+                        <Form.Label>Schedule Day</Form.Label>
+                        <Form.Control as="select" required onChange={(e) => setDay(e.target.value)} value={day}>
+                            {days.map((day, i) => {
+                                return <option key={i} value={day}>{day}</option>
+                            })}
+                        </Form.Control>
                     </Form.Group>
+                    <Form.Group as={Col} controlId="description">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control type="text" placeholder="Enter Description" required onChange={(e) => setDescription(e.target.value)} value={description} />
+                    </Form.Group>
+                </Form.Row>
+                <Form.Row>
                     <Form.Group as={Col} controlId="start">
                         <Form.Label>Start Time</Form.Label>
                         <Form.Control type="text" placeholder="Enter Start Time" required onChange={(e) => setStart(e.target.value)} value={start} />
