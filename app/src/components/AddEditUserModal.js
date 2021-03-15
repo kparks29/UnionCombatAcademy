@@ -66,7 +66,7 @@ export const AddEditUserModal = (props) => {
         setRole(user.role || 'student')
     }
 
-    const onAddEditUserSubmit = (event) => {
+    const onSubmit = (event) => {
         const form = event.currentTarget
         event.preventDefault()
         event.stopPropagation()
@@ -101,7 +101,7 @@ export const AddEditUserModal = (props) => {
         </Modal.Header>
         <Modal.Body>
             {!_.isEmpty(alert) ? <Alert variant="danger">{alert}</Alert> : ''}
-            <Form noValidate validated={validated} onSubmit={onAddEditUserSubmit} ref={formRef}>
+            <Form noValidate validated={validated} onSubmit={onSubmit} ref={formRef}>
                 <Form.Row>
                     <Form.Group as={Col} controlId="firstName">
                         <Form.Label>First Name</Form.Label>

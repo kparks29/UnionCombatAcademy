@@ -27,7 +27,7 @@ export const AddEditNewsModal = (props) => {
         setMessage(news.message || '')
     }
 
-    const onAddEditNewsSubmit = (event) => {
+    const onSubmit = (event) => {
         const form = event.currentTarget
         event.preventDefault()
         event.stopPropagation()
@@ -58,7 +58,7 @@ export const AddEditNewsModal = (props) => {
         </Modal.Header>
         <Modal.Body>
             {!_.isEmpty(alert) ? <Alert variant="danger">{alert}</Alert> : ''}
-            <Form noValidate validated={validated} onSubmit={onAddEditNewsSubmit}>
+            <Form noValidate validated={validated} onSubmit={onSubmit}>
                 <Form.Group controlId="title">
                     <Form.Label>First Title</Form.Label>
                     <Form.Control type="text" placeholder="Enter Title" required onChange={(e) => setTitle(e.target.value)} value={title} />
