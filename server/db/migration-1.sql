@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS News (
 CREATE TABLE IF NOT EXISTS Schedules (
 	id VARCHAR(36) PRIMARY KEY,
 	programId VARCHAR(36) NOT NULL,
-    day VARCHAR(200) NOT NULL,
+    day SET('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
     start VARCHAR(200) NOT NULL,
 	end VARCHAR(200) NOT NULL,
 	description TEXT,
