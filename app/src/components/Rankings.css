@@ -1,0 +1,8 @@
+.Rankings .card-title {
+    position: relative;
+}
+
+.Rankings .card-title button {
+    position: absolute;
+    right: 30px;
+}
