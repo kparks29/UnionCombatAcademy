@@ -23,3 +23,8 @@
     background-color: lightblue;
     cursor: pointer;
 }
+
+.Schedules .card-text p {
+    text-align: justify;
+    margin-bottom: 5px;
+}
